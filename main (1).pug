@@ -1,0 +1,79 @@
+//- Файл: main.pug
+//- Базовый шаблон страницы с наследованием
+
+//- Наследуем от базового layout
+extends layout.pug
+
+//- Переопределяем блок title
+block title
+  title Главная страница | #{siteName}
+
+//- Подключаем CSS для этой страницы
+block styles
+  link(rel="stylesheet" href="/css/home.css")
+
+//- Основное содержимое страницы
+block content
+  //- Секция hero с условным классом
+  section.hero(class=isHomepage ? 'hero-home' : 'hero-default')
+    .container
+      h1.hero-title Добро пожаловать на #{siteName}!
+      p.hero-subtitle Самый удобный способ изучить Pug
+
+      //- Кнопка с атрибутами
+      a.button(
+        href="/learn" 
+        title="Начать обучение"
+        data-action="start-learning"
+      ) Начать обучение
+
+  //- Секция features с циклом
+  section.features
+    h2.section-title Наши преимущества
+    
+    .features-grid
+      //- Цикл по массиву преимуществ
+      each feature in features
+        .feature-card
+          .feature-icon
+            img(
+              src=`/icons/${feature.icon}.svg` 
+              alt=feature.title
+            )
+          h3.feature-title= feature.title
+          p.feature-desc= feature.description
+
+  //- Форма подписки с миксином
+  section.newsletter
+    +sectionTitle('Подпишитесь на рассылку')
+    
+    form.newsletter-form(method="POST" action="/subscribe")
+      .form-group
+        label(for="email") Ваш email:
+        input#email(
+          type="email" 
+          name="email" 
+          placeholder="example@mail.com"
+          required
+        )
+      
+      .form-group
+        +checkbox('agree', 'Я согласен на обработку данных', true)
+      
+      button.button(type="submit") Подписаться
+
+//- Миксин для чекбокса
+mixin checkbox(id, label, checked=false)
+  .checkbox
+    input(
+      type="checkbox" 
+      id=id 
+      name=id 
+      checked=checked
+    )
+    label(for=id)= label
+
+//- Миксин для заголовка секции
+mixin sectionTitle(text)
+  h2.section-title
+    span= text
